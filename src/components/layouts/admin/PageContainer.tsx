@@ -1,65 +1,51 @@
 // src/components/layouts/admin/PageContainer.tsx
-import React from 'react';
+import React, { memo } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { PageHeader } from '@/components/layouts/admin/PageHeader';
+import { PageHeader } from './PageHeader';
 import { cn } from '@/lib/utils';
 
 interface PageContainerProps {
     children: React.ReactNode;
     title?: string;
     description?: string;
-    headerChildren?: React.ReactNode;
+    headerActions?: React.ReactNode;
     className?: string;
     scrollable?: boolean;
     contentClassName?: string;
 }
 
-const PageContainer = React.memo<PageContainerProps>(({
-                                                          children,
-                                                          title,
-                                                          description,
-                                                          headerChildren,
-                                                          className = "",
-                                                          scrollable = true,
-                                                          contentClassName = ""
-                                                      }) => {
+export const PageContainer = memo<PageContainerProps>(({
+                                                           children,
+                                                           title,
+                                                           description,
+                                                           headerActions,
+                                                           className,
+                                                           scrollable = true,
+                                                           contentClassName,
+                                                       }) => {
+    const ContentWrapper = scrollable ? ScrollArea : 'div';
+
     return (
         <div className={cn("flex flex-col flex-1 w-full min-h-0", className)}>
-            {/* Header Section */}
-            <div className="flex-shrink-0 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="w-full px-4 md:px-6">
-                    <PageHeader
-                        title={title}
-                        description={description}
-                    >
-                        {headerChildren}
-                    </PageHeader>
+            {(title || description || headerActions) && (
+                <div className="flex-shrink-0 border-b bg-background/95 backdrop-blur">
+                    <div className="w-full px-4 md:px-6">
+                        <PageHeader title={title} description={description}>
+                            {headerActions}
+                        </PageHeader>
+                    </div>
                 </div>
-            </div>
+            )}
 
-            {/* Main Content Section */}
             <div className="flex flex-col flex-1 w-full overflow-hidden min-h-0">
-                {scrollable ? (
-                    <ScrollArea className="h-full w-full">
-                        <main className={cn(
-                            "w-full p-4 md:p-6 space-y-6",
-                            contentClassName
-                        )}>
-                            {children}
-                        </main>
-                    </ScrollArea>
-                ) : (
-                    <main className={cn(
-                        "w-full p-4 md:p-6 space-y-6 flex-1 overflow-y-auto",
-                        contentClassName
-                    )}>
+                <ContentWrapper className={scrollable ? "h-full w-full" : "flex-1 overflow-y-auto"}>
+                    <main className={cn("w-full p-4 md:p-6 space-y-6", contentClassName)}>
                         {children}
                     </main>
-                )}
+                </ContentWrapper>
             </div>
         </div>
     );
 });
 
 PageContainer.displayName = 'PageContainer';
-export default PageContainer;

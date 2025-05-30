@@ -16,7 +16,7 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Icons } from "@/components/icons/Icons";
-import { useIsMobile } from "@/lib/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import type { User } from "@/types";
 
 interface UserInfoProps {

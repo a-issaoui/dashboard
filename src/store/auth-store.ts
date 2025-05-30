@@ -1,339 +1,135 @@
-// src/store/auth-store.ts - Authentication management
+// src/store/auth-store.ts
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { devtools } from 'zustand/middleware';
-import type { User, LoginCredentials, RegisterData, AuthResult } from '@/types';
-import type { AuthState } from './interfaces';
+import { persist } from 'zustand/middleware';
+import { authService } from '@/lib/services/auth';
 import { STORAGE_KEYS } from '@/lib/constants';
+import type { User, LoginCredentials, RegisterData, AuthResult } from '@/types';
+
+interface AuthState {
+    user: User | null;
+    token: string | null;
+    isLoading: boolean;
+    isAuthenticated: boolean;
+    error: string | null;
+}
 
 interface AuthActions {
     login: (credentials: LoginCredentials) => Promise<AuthResult>;
     register: (userData: RegisterData) => Promise<AuthResult>;
     logout: () => void;
-    refreshSession: () => Promise<void>;
-    updateProfile: (profileData: Partial<User>) => Promise<AuthResult>;
-    checkSession: () => boolean;
-    updateLastActivity: () => void;
-    initializeAuth: () => void;
+    clearError: () => void;
+    initializeAuth: () => Promise<void>;
 }
 
-
-
-// Constants
-const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-const REFRESH_THRESHOLD = 5 * 60 * 1000; // 5 minutes before expiry
-
-// Utility functions
-const getCookie = async (name: string): Promise<string | null> => {
-    try {
-        const { getCookie: getCookieUtil } = await import('cookies-next');
-        const value = getCookieUtil(name);
-        return typeof value === 'string' ? value : null;
-    } catch (error) {
-        console.error(`Failed to get cookie ${name}:`, error);
-        return null;
-    }
-};
-
-const setCookie = async (name: string, value: string, options: Record<string, unknown> = {}) => {
-    try {
-        const { setCookie: setCookieUtil } = await import('cookies-next');
-        setCookieUtil(name, value, {
-            path: '/',
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            httpOnly: false,
-            ...options,
-        });
-    } catch (error) {
-        console.error(`Failed to set cookie ${name}:`, error);
-    }
-};
-
-const deleteCookie = async (name: string) => {
-    try {
-        const { deleteCookie: deleteCookieUtil } = await import('cookies-next');
-        deleteCookieUtil(name, { path: '/' });
-    } catch (error) {
-        console.error(`Failed to delete cookie ${name}:`, error);
-    }
-};
-
-// Create API client
-const createApiClient = () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const axios = require('axios');
-    return axios.create({
-        baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        timeout: 10000,
-    });
-};
+type AuthStore = AuthState & AuthActions;
 
 export const useAuthStore = create<AuthStore>()(
-    devtools(
-        persist(
-            (set, get) => ({
-                // State
-                user: null,
-                token: null,
-                refreshToken: null,
-                isLoading: false,
-                isAuthenticated: false,
-                lastActivity: null,
-                sessionExpiry: null,
-                error: null,
+    persist(
+        (set, get) => ({
+            user: null,
+            token: null,
+            isLoading: false,
+            isAuthenticated: false,
+            error: null,
 
-                // Actions
-                login: async (credentials: LoginCredentials): Promise<AuthResult> => {
-                    set({ isLoading: true, error: null });
+            login: async (credentials) => {
+                set({ isLoading: true, error: null });
 
-                    try {
-                        const api = createApiClient();
-                        const response = await api.post('/auth/login', credentials);
-                        const { user, token, refreshToken } = response.data;
+                const result = await authService.login(credentials);
 
-                        // Set cookies
-                        const maxAge = credentials.rememberMe ?
-                            60 * 60 * 24 * 30 : // 30 days
-                            60 * 60 * 24; // 1 day
-
-                        await setCookie(STORAGE_KEYS.AUTH_TOKEN, token, { maxAge });
-                        if (refreshToken) {
-                            await setCookie(STORAGE_KEYS.REFRESH_TOKEN, refreshToken, { maxAge });
-                        }
-
-                        const now = Date.now();
-                        set({
-                            user,
-                            token,
-                            refreshToken,
-                            isLoading: false,
-                            isAuthenticated: true,
-                            lastActivity: now,
-                            sessionExpiry: now + SESSION_TIMEOUT,
-                        });
-
-                        return { success: true, user };
-                    } catch (error: unknown) {
-                        console.error('Login failed:', error);
-                        set({ isLoading: false });
-                        const errorMessage = error instanceof Error ?
-                            error.message :
-                            (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
-                        return {
-                            success: false,
-                            error: errorMessage,
-                        };
-                    }
-                },
-
-                register: async (userData: RegisterData): Promise<AuthResult> => {
-                    set({ isLoading: true });
-
-                    try {
-                        const api = createApiClient();
-                        const response = await api.post('/auth/register', userData);
-                        const { user, token, refreshToken } = response.data;
-
-                        await setCookie(STORAGE_KEYS.AUTH_TOKEN, token);
-                        if (refreshToken) {
-                            await setCookie(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-                        }
-
-                        const now = Date.now();
-                        set({
-                            user,
-                            token,
-                            refreshToken,
-                            isLoading: false,
-                            isAuthenticated: true,
-                            lastActivity: now,
-                            sessionExpiry: now + SESSION_TIMEOUT,
-                        });
-
-                        return { success: true, user };
-                    } catch (error: unknown) {
-                        console.error('Registration failed:', error);
-                        set({ isLoading: false });
-                        const errorMessage = error instanceof Error ?
-                            error.message :
-                            (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed';
-                        return {
-                            success: false,
-                            error: errorMessage,
-                        };
-                    }
-                },
-
-                logout: () => {
-                    deleteCookie(STORAGE_KEYS.AUTH_TOKEN);
-                    deleteCookie(STORAGE_KEYS.REFRESH_TOKEN);
-
+                if (result.success) {
                     set({
-                        user: null,
-                        token: null,
-                        refreshToken: null,
-                        isAuthenticated: false,
+                        user: result.user!,
+                        token: result.token!,
+                        isAuthenticated: true,
                         isLoading: false,
-                        lastActivity: null,
-                        sessionExpiry: null,
                     });
-                },
 
-                refreshSession: async (): Promise<void> => {
-                    const { refreshToken } = get();
-                    if (!refreshToken) {
-                        throw new Error('No refresh token available');
-                    }
+                    // Set cookie
+                    const { setCookie } = await import('cookies-next');
+                    await setCookie(STORAGE_KEYS.AUTH_TOKEN, result.token!, {
+                        maxAge: credentials.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
+                        path: '/',
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: 'lax',
+                    });
+                } else {
+                    set({ isLoading: false, error: result.error! });
+                }
 
-                    try {
-                        const api = createApiClient();
-                        const response = await api.post('/auth/refresh', { refreshToken });
-                        const { token: newToken, refreshToken: newRefreshToken } = response.data;
+                return result;
+            },
 
-                        await setCookie(STORAGE_KEYS.AUTH_TOKEN, newToken);
-                        if (newRefreshToken) {
-                            await setCookie(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken);
-                        }
+            register: async (userData) => {
+                set({ isLoading: true, error: null });
 
-                        const now = Date.now();
-                        set({
-                            token: newToken,
-                            refreshToken: newRefreshToken,
-                            lastActivity: now,
-                            sessionExpiry: now + SESSION_TIMEOUT,
-                        });
-                    } catch (error) {
-                        console.error('Session refresh failed:', error);
-                        get().logout();
-                        throw error;
-                    }
-                },
+                const result = await authService.register(userData);
 
-                updateProfile: async (profileData: Partial<User>): Promise<AuthResult> => {
-                    const { user } = get();
-                    if (!user) {
-                        return { success: false, error: 'Not authenticated' };
-                    }
-
-                    set({ isLoading: true });
-
-                    try {
-                        const api = createApiClient();
-                        const response = await api.put('/auth/profile', profileData);
-                        const updatedUser = response.data.user;
-
-                        set({
-                            user: updatedUser,
-                            isLoading: false,
-                        });
-
-                        return { success: true, user: updatedUser };
-                    } catch (error: unknown) {
-                        console.error('Profile update failed:', error);
-                        set({ isLoading: false });
-                        const errorMessage = error instanceof Error ?
-                            error.message :
-                            (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Profile update failed';
-                        return {
-                            success: false,
-                            error: errorMessage,
-                        };
-                    }
-                },
-
-                checkSession: (): boolean => {
-                    const { sessionExpiry, lastActivity } = get();
-                    if (!sessionExpiry || !lastActivity) return false;
-
-                    const now = Date.now();
-                    const isExpired = now > sessionExpiry;
-
-                    if (isExpired) {
-                        get().logout();
-                        return false;
-                    }
-
-                    // Check if refresh is needed
-                    const timeUntilExpiry = sessionExpiry - now;
-                    if (timeUntilExpiry < REFRESH_THRESHOLD) {
-                        get().refreshSession().catch(() => {
-                            // Refresh failed, will be handled in refreshSession
-                        });
-                    }
-
-                    return true;
-                },
-
-                updateLastActivity: () => {
-                    const now = Date.now();
+                if (result.success) {
                     set({
-                        lastActivity: now,
-                        sessionExpiry: now + SESSION_TIMEOUT,
+                        user: result.user!,
+                        token: result.token!,
+                        isAuthenticated: true,
+                        isLoading: false,
                     });
-                },
+                } else {
+                    set({ isLoading: false, error: result.error! });
+                }
 
-                initializeAuth: async () => {
-                    const token = await getCookie(STORAGE_KEYS.AUTH_TOKEN);
-                    const refreshToken = await getCookie(STORAGE_KEYS.REFRESH_TOKEN);
+                return result;
+            },
 
-                    if (token) {
-                        try {
-                            const api = createApiClient();
-                            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            logout: () => {
+                authService.logout().catch(console.error);
 
-                            const response = await api.get('/auth/me');
-                            const user = response.data.user;
+                // Clear cookie
+                import('cookies-next').then(({ deleteCookie }) => {
+                    deleteCookie(STORAGE_KEYS.AUTH_TOKEN);
+                });
 
-                            const now = Date.now();
-                            set({
-                                user,
-                                token,
-                                refreshToken,
-                                isAuthenticated: true,
-                                lastActivity: now,
-                                sessionExpiry: now + SESSION_TIMEOUT,
-                            });
-                        } catch (error) {
-                            console.error('Auth initialization failed:', error);
-                            get().logout();
-                        }
-                    }
-                },
-            }),
-            {
-                name: 'auth-storage',
-                storage: createJSONStorage(() => localStorage),
-                partialize: (state) => ({
-                    token: state.token,
-                    isAuthenticated: state.isAuthenticated,
-                    user: state.user,
-                }),
-            }
-        ),
+                set({
+                    user: null,
+                    token: null,
+                    isAuthenticated: false,
+                    error: null,
+                });
+            },
+
+            clearError: () => set({ error: null }),
+
+            initializeAuth: async () => {
+                const { getCookie } = await import('cookies-next');
+                const token = getCookie(STORAGE_KEYS.AUTH_TOKEN);
+
+                if (!token) return;
+
+                try {
+                    const user = await authService.getProfile();
+                    set({ user, token, isAuthenticated: true });
+                } catch (error) {
+                    get().logout();
+                }
+            },
+        }),
         {
-            name: 'auth-store',
+            name: 'auth-storage',
+            partialize: (state) => ({
+                token: state.token,
+                isAuthenticated: state.isAuthenticated,
+                user: state.user,
+            }),
         }
     )
 );
 
-export type AuthStore = AuthState & AuthActions;
-
-// Convenient auth selector
+// Convenience selector
 export const useAuth = () => useAuthStore(state => ({
     user: state.user,
     isAuthenticated: state.isAuthenticated,
     isLoading: state.isLoading,
+    error: state.error,
     login: state.login,
     logout: state.logout,
     register: state.register,
-    updateProfile: state.updateProfile,
+    clearError: state.clearError,
 }));
-
-// Initialize on client
-if (typeof window !== 'undefined') {
-    useAuthStore.getState().initializeAuth();
-}

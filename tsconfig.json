@@ -16,17 +16,39 @@
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/hooks/*": ["./src/lib/hooks/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/store/*": ["./src/store/*"],
-      "@/config/*": ["./src/config/*"],
-      "@/utils/*": ["./src/lib/utils/*"],
-      "@/services/*": ["./src/lib/services/*"],
-      "@/constants/*": ["./src/lib/constants/*"],
-      "@/validations/*": ["./src/lib/validations/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/hooks/*": [
+        "./src/lib/hooks/*"
+      ],
+      "@/services/*": [
+        "./src/lib/services/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ],
+      "@/store/*": [
+        "./src/store/*"
+      ],
+      "@/config/*": [
+        "./src/config/*"
+      ],
+      "@/utils/*": [
+        "./src/lib/utils/*"
+      ],
+      "@/constants/*": [
+        "./src/lib/constants/*"
+      ],
+      "@/validations/*": [
+        "./src/lib/validations/*"
+      ]
     },
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,

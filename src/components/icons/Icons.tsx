@@ -1,209 +1,89 @@
 // src/components/icons/Icons.tsx
-'use client';
+import { memo, Suspense } from 'react';
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 
-import {
-    WindowsLogoIcon,
-    SquaresFourIcon,
-    GearIcon,
-    UserCircleIcon,
-    PlusIcon,
-    MinusIcon,
-    CaretCircleDownIcon,
-    CaretCircleUpIcon,
-    MoonIcon,
-    SunIcon,
-    ArrowLineRightIcon,
-    ArrowLineLeftIcon,
-    ListMagnifyingGlassIcon,
-    SignOutIcon,
-    SignInIcon,
-    UserSwitchIcon,
-    UserListIcon,
-    UserCirclePlusIcon,
-    BellIcon,
-    BellRingingIcon,
-    LockIcon,
-    LockOpenIcon,
-    FilePdfIcon,
-    FileTxtIcon,
-    FileXlsIcon,
-    FileImageIcon,
-    PrinterIcon,
-    TrashIcon,
-    EyeIcon,
-    PencilIcon,
-    DotIcon,
-    TranslateIcon,
-    SlidersIcon,
-    DotOutlineIcon,
-    CaretUpDownIcon,
-    CreditCardIcon,
-    HouseLineIcon,
-    UsersIcon,
-    LockKeyIcon,
-    ShieldIcon,
-    SpinnerIcon,
-    CheckIcon,
-    CaretLeftIcon,
-    CaretRightIcon,
-    CaretUpIcon,
-    CaretDownIcon,
-    InfoIcon,
-    ChatTextIcon,
-    type Icon as PhosphorIcon,
-} from "@phosphor-icons/react";
+// Icon name type for better TypeScript support
+export type IconName =
+    | 'Dashboard' | 'Users' | 'Settings' | 'Home' | 'Profile'
+    | 'Shield' | 'Bell' | 'Search' | 'Menu' | 'Check'
+    | 'CaretRight' | 'CaretLeft' | 'CaretDown' | 'CaretUp'
+    | 'ThemeLight' | 'ThemeDark' | 'Spinner' | 'SignOut';
 
-// Define the icon component type
-type IconComponent = PhosphorIcon;
+// Icon cache for performance
+const iconCache = new Map<IconName, PhosphorIcon>();
 
-// Icons mapping object with proper typing
-export const Icons = {
-    // Navigation & Core UI
-    Dashboard: WindowsLogoIcon,
-    Menu: SquaresFourIcon,
-    Settings: GearIcon,
-    Home: HouseLineIcon,
+// Dynamic icon loader with error handling
+export const getIcon = async (iconName: IconName): Promise<PhosphorIcon | null> => {
+    if (iconCache.has(iconName)) {
+        return iconCache.get(iconName)!;
+    }
 
-    // User Management
-    UserCircle: UserCircleIcon,
-    Profile: UserCircleIcon,
-    Users: UsersIcon,
-    UserList: UserListIcon,
-    UserAdd: UserCirclePlusIcon,
-    UserChange: UserSwitchIcon,
+    try {
+        // Dynamic import based on icon name
+        const iconModule = await import('@phosphor-icons/react').then(mod => ({
+            Dashboard: mod.WindowsLogoIcon,
+            Users: mod.UsersIcon,
+            Settings: mod.GearIcon,
+            Home: mod.HouseLineIcon,
+            Profile: mod.UserCircleIcon,
+            Shield: mod.ShieldIcon,
+            Bell: mod.BellIcon,
+            Search: mod.ListMagnifyingGlassIcon,
+            Menu: mod.SquaresFourIcon,
+            Check: mod.CheckIcon,
+            CaretRight: mod.CaretRightIcon,
+            CaretLeft: mod.CaretLeftIcon,
+            CaretDown: mod.CaretDownIcon,
+            CaretUp: mod.CaretUpIcon,
+            ThemeLight: mod.SunIcon,
+            ThemeDark: mod.MoonIcon,
+            Spinner: mod.SpinnerIcon,
+            SignOut: mod.SignOutIcon,
+        }));
 
-    // Permissions & Security
-    Shield: ShieldIcon,
-    Permission: LockKeyIcon,
-    Lock: LockIcon,
-    Unlock: LockOpenIcon,
+        const IconComponent = iconModule[iconName];
+        if (IconComponent) {
+            iconCache.set(iconName, IconComponent);
+            return IconComponent;
+        }
+    } catch (error) {
+        console.warn(`Failed to load icon: ${iconName}`, error);
+    }
 
-    // Actions & Controls
-    Add: PlusIcon,
-    Remove: MinusIcon,
-    View: EyeIcon,
-    Edit: PencilIcon,
-    Trash: TrashIcon,
-    Delete: TrashIcon,
-    Search: ListMagnifyingGlassIcon,
-    Print: PrinterIcon,
-    Filters: SlidersIcon,
+    return null;
+};
 
-    // Notifications & Alerts
-    Notification: BellIcon,
-    NotificationActive: BellRingingIcon,
-    Bell: BellIcon,
-    Info: InfoIcon,
-
-    // Communication
-    MessageSquare: ChatTextIcon,
-
-    // Carets & Arrows
-    CaretDownCircle: CaretCircleDownIcon,
-    CaretUpCircle: CaretCircleUpIcon,
-    CaretRight: CaretRightIcon,
-    CaretLeft: CaretLeftIcon,
-    CaretUp: CaretUpIcon,
-    CaretDown: CaretDownIcon,
-    CaretSort: CaretUpDownIcon,
-    ArrowRight: ArrowLineRightIcon,
-    ArrowLeft: ArrowLineLeftIcon,
-
-    // Files
-    FilePdf: FilePdfIcon,
-    FileText: FileTxtIcon,
-    FileExcel: FileXlsIcon,
-    FileImage: FileImageIcon,
-
-    // Theme & Display
-    ThemeDark: MoonIcon,
-    ThemeLight: SunIcon,
-    Translate: TranslateIcon,
-
-    // Status & Lists
-    ListDot: DotIcon,
-    ListDotOutline: DotOutlineIcon,
-    Check: CheckIcon,
-
-    // Auth
-    SignIn: SignInIcon,
-    SignOut: SignOutIcon,
-
-    // Misc
-    Billing: CreditCardIcon,
-    Spinner: SpinnerIcon,
-    Loader2: SpinnerIcon, // Alias for compatibility
-} as const;
-
-// Type for available icon names
-export type IconName = keyof typeof Icons;
-
-// Props interface for icon components
+// Optimized Icon component with suspense
 interface IconProps {
-    size?: number | string;
-    weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
+    name: IconName;
+    size?: number;
+    weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
     className?: string;
 }
 
-// Optimized helper function with better error handling and caching
-const iconCache = new Map<IconName, IconComponent>();
+const IconFallback = ({ size = 24 }: { size?: number }) => (
+    <div
+        className="bg-gray-200 animate-pulse rounded"
+        style={{ width: size, height: size }}
+    />
+);
 
-export const getIcon = (iconName: IconName): IconComponent | null => {
-    if (!iconName || typeof iconName !== 'string') {
-        console.warn('getIcon: iconName must be a valid string.');
-        return null;
-    }
+export const Icon = memo<IconProps>(({ name, size = 24, weight = 'regular', className }) => {
+    const [IconComponent, setIconComponent] = useState<PhosphorIcon | null>(null);
 
-    // Check cache first for performance
-    if (iconCache.has(iconName)) {
-        return iconCache.get(iconName) || null;
-    }
-
-    const IconComponent = Icons[iconName];
+    useEffect(() => {
+        getIcon(name).then(setIconComponent);
+    }, [name]);
 
     if (!IconComponent) {
-        console.warn(`getIcon: Icon "${iconName}" not found in Icons object.`);
-        iconCache.set(iconName, IconComponent);
-        return null;
+        return <IconFallback size={size} />;
     }
 
-    // Cache the result
-    iconCache.set(iconName, IconComponent);
-    return IconComponent;
-};
+    return (
+        <Suspense fallback={<IconFallback size={size} />}>
+            <IconComponent size={size} weight={weight} className={className} />
+        </Suspense>
+    );
+});
 
-// Generic Icon component with type safety
-interface GenericIconProps extends IconProps {
-    name: IconName;
-}
-
-export const Icon: React.FC<GenericIconProps> = ({
-                                                     name,
-                                                     size = 24,
-                                                     weight = "regular",
-                                                     className,
-                                                     ...props
-                                                 }) => {
-    const IconComponent = getIcon(name);
-
-    if (!IconComponent) {
-        // Fallback to a default icon
-        return <Icons.Info size={size} weight={weight} className={className} {...props} />;
-    }
-
-    return <IconComponent size={size} weight={weight} className={className} {...props} />;
-};
-
-// Optional: Clear cache if needed (useful for development)
-export const clearIconCache = (): void => {
-    iconCache.clear();
-    console.log('Icon cache cleared.');
-};
-
-// Get all available icon names
-export const getAvailableIcons = (): IconName[] => {
-    return Object.keys(Icons) as IconName[];
-};
-
-// Type exports for external use
-export type { IconComponent, IconProps, GenericIconProps };
+Icon.displayName = 'Icon';
