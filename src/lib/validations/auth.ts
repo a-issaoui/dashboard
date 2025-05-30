@@ -1,13 +1,12 @@
-// 1. Fix src/lib/validations/auth.ts - Update zod import
 import { z } from 'zod/v4';
-import { VALIDATION_RULES } from '@/lib/constants';
+import { VALIDATION_RULES } from '@/lib/validations/rules';
 
 // Common field validations
 export const emailSchema = z
-    .string()
+    .email('Please enter a valid email address')
     .min(1, 'Email is required')
-    .max(VALIDATION_RULES.EMAIL.MAX_LENGTH, 'Email is too long')
-    .email('Please enter a valid email address');
+    .max(VALIDATION_RULES.EMAIL.MAX_LENGTH, 'Email is too long');
+
 
 export const passwordSchema = z
     .string()
@@ -86,54 +85,3 @@ export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
-
-// 2. Fix src/lib/hooks/useLocalStorage.ts - Remove unused useEffect import
-import { useState, useCallback } from 'react';
-
-export function useLocalStorage<T>(
-    key: string,
-    initialValue: T
-): [T, (value: T | ((prev: T) => T)) => void, () => void] {
-    const [storedValue, setStoredValue] = useState<T>(() => {
-        if (typeof window === 'undefined') {
-            return initialValue;
-        }
-
-        try {
-            const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
-        } catch (error) {
-            console.warn(`Error reading localStorage key "${key}":`, error);
-            return initialValue;
-        }
-    });
-
-    const setValue = useCallback(
-        (value: T | ((prev: T) => T)) => {
-            try {
-                const valueToStore = value instanceof Function ? value(storedValue) : value;
-                setStoredValue(valueToStore);
-
-                if (typeof window !== 'undefined') {
-                    window.localStorage.setItem(key, JSON.stringify(valueToStore));
-                }
-            } catch (error) {
-                console.warn(`Error setting localStorage key "${key}":`, error);
-            }
-        },
-        [key, storedValue]
-    );
-
-    const removeValue = useCallback(() => {
-        try {
-            setStoredValue(initialValue);
-            if (typeof window !== 'undefined') {
-                window.localStorage.removeItem(key);
-            }
-        } catch (error) {
-            console.warn(`Error removing localStorage key "${key}":`, error);
-        }
-    }, [key, initialValue]);
-
-    return [storedValue, setValue, removeValue];
-}
