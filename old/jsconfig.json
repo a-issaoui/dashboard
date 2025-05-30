@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@/app/*": ["app/*"],
+      "@/components/*": ["components/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/lib/*": ["lib/*"],
+      "@/data/*": ["data/*"],
+      "@/store/*": ["store/*"],
+      "@/i18n/*": ["i18n/*"],
+      "@/constants/*": ["constants/*"],
+      "@/config/*": ["config/*"],
+      "@/public/*": ["../public/*"]
+    },
+    "jsx": "preserve",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", ".next", "dist", "out"]
+}
