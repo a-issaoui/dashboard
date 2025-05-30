@@ -1,0 +1,75 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "submit": "Submit",
+    "close": "Close",
+    "home": "Home",
+    "breadcrumb": "Breadcrumb",
+    "group": "Group",
+    "currentPage": "Current Page",
+    "link": "Link"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "profile": "Profile",
+    "users": "Users",
+    "reports": "Reports",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "usersManagement": "Users Management",
+    "rolesAndPermissions": "Roles & Permissions",
+    "settingsGroup": "Configuration",
+    "generalSettings": "General Settings",
+    "noItems": "No navigation items available"
+  },
+  "UserDropdown": {
+    "account": "Account",
+    "billing": "Billing",
+    "notifications": "Notifications",
+    "logout": "Log out",
+    "guestNamePlaceholder": "Guest User"
+  },
+  "dashboard": {
+    "title": "Dashboard Overview",
+    "stats": "Statistics",
+    "overview": "Comprehensive overview of activities and key metrics.",
+    "totalUsers": "Total Users",
+    "revenue": "Revenue"
+  },
+  "auth": {
+    "loginTitle": "Login to your account",
+    "loginDescription": "Enter your email below to login to your account",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember me"
+  },
+  "forms": {
+    "required": "This field is required",
+    "emailInvalid": "Please enter a valid email",
+    "passwordMin": "Password must be at least {min} characters",
+    "passwordMatch": "Passwords do not match",
+    "loginFailed": "Login failed. Please check your credentials."
+  },
+  "pageHeaders": {
+    "Home": "Home",
+    "Login": "Login",
+    "Dashboard Overview": "Dashboard Overview",
+    "My Profile": "My Profile",
+    "User Management": "User Management",
+    "Role Management": "Role Management",
+    "Permission Management": "Permission Management",
+    "Application Settings": "Application Settings"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "common": {
+    "welcome": "مرحبا",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جاري التحميل...",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "home": "الرئيسية",
+    "breadcrumb": "مسار التنقل",
+    "group": "مجموعة",
+    "currentPage": "الصفحة الحالية",
+    "link": "رابط"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "settings": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "users": "المستخدمون",
+    "reports": "التقارير",
+    "roles": "الأدوار",
+    "permissions": "الصلاحيات",
+    "usersManagement": "إدارة المستخدمين",
+    "rolesAndPermissions": "الأدوار والصلاحيات",
+    "settingsGroup": "الإعدادات العامة",
+    "generalSettings": "إعدادات عامة",
+    "noItems": "لا توجد عناصر تنقل متاحة"
+  },
+  "UserDropdown": {
+    "account": "الحساب",
+    "billing": "الفواتير",
+    "notifications": "الإشعارات",
+    "logout": "تسجيل الخروج",
+    "guestNamePlaceholder": "مستخدم ضيف"
+  },
+  "dashboard": {
+    "title": "نظرة عامة على لوحة التحكم",
+    "stats": "الإحصائيات",
+    "overview": "نظرة شاملة على الأنشطة والمقاييس الرئيسية.",
+    "totalUsers": "إجمالي المستخدمين",
+    "revenue": "الإيرادات"
+  },
+  "auth": {
+    "loginTitle": "الدخول إلى حسابك",
+    "loginDescription": "أدخل بريدك الإلكتروني أدناه للدخول إلى حسابك",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "rememberMe": "تذكرني"
+  },
+  "forms": {
+    "required": "هذا الحقل مطلوب",
+    "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+    "passwordMin": "يجب أن تكون كلمة المرور {min} أحرف على الأقل",
+    "passwordMatch": "كلمات المرور غير متطابقة",
+    "loginFailed": "فشل تسجيل الدخول. يرجى التحقق من بياناتك."
+  },
+  "pageHeaders": {
+    "Home": "الرئيسية",
+    "Login": "الوصول إلى حسابك.",
+    "Dashboard Overview": "نظرة عامة على لوحة التحكم",
+    "My Profile": "ملفي الشخصي",
+    "User Management": "إدارة المستخدمين",
+    "Role Management": "إدارة الأدوار",
+    "Permission Management": "إدارة الصلاحيات",
+    "Application Settings": "إعدادات التطبيق"
+  }
+}
