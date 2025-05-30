@@ -1,4 +1,3 @@
-// src/components/shared/ModeToggle.tsx
 'use client';
 
 import { Icons } from '@/components/icons/Icons';
@@ -28,14 +27,12 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
         async (e?: React.MouseEvent) => {
             if (isTransitioning) return;
 
-            // Haptic feedback
             if (navigator.vibrate) {
                 navigator.vibrate(1);
             }
 
             setIsTransitioning(true);
 
-            // Enhanced view transition with better performance
             if (!document.startViewTransition) {
                 toggleTheme();
                 setTimeout(() => setIsTransitioning(false), 300);
@@ -57,7 +54,6 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
                     root.classList.remove('transition-colors');
                     toggleTheme();
 
-                    // Re-enable transitions after a frame
                     requestAnimationFrame(() => {
                         root.classList.add('transition-colors');
                     });
@@ -96,7 +92,6 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
                 "size-8 bg-muted/60 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 relative overflow-hidden touch-manipulation select-none",
                 "hover:bg-accent/80 hover:shadow-lg hover:scale-105",
                 isTransitioning && "opacity-80 cursor-not-allowed",
-                // Enhanced gradient background effect - adjusted for RTL
                 isRTL
                     ? "before:absolute before:inset-0 before:bg-gradient-to-l before:from-yellow-500/20 before:to-blue-500/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
                     : "before:absolute before:inset-0 before:bg-gradient-to-r before:from-yellow-500/20 before:to-blue-500/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300",
@@ -109,7 +104,8 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode${isTransitioning ? ', switching themes' : ''}`}
-            disabled={isTransitioning}
+            // ✅ Remove disabled prop - it's not valid for div
+            data-disabled={isTransitioning}
         >
             <div className="relative z-10">
                 {isTransitioning ? (
@@ -123,7 +119,6 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
                         className={cn(
                             "text-yellow-500 transition-all duration-300",
                             "hover:scale-110 hover:drop-shadow-md",
-                            // RTL-aware rotation
                             isRTL ? "hover:-rotate-12" : "hover:rotate-12",
                             isHovered && "animate-pulse"
                         )}
@@ -135,7 +130,6 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
                         className={cn(
                             "text-slate-600 dark:text-slate-400 transition-all duration-300",
                             "hover:scale-110 hover:drop-shadow-md",
-                            // RTL-aware rotation
                             isRTL ? "hover:-rotate-12" : "hover:rotate-12",
                             isHovered && "animate-pulse"
                         )}
@@ -143,7 +137,6 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
                 )}
             </div>
 
-            {/* Theme indicator - RTL positioning */}
             <span
                 className={cn(
                     "absolute w-2 h-2 rounded-full border border-background transition-all duration-300",

@@ -1,9 +1,8 @@
-// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
-import { getDirection, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/lib/constants';
+import { getDirection, SUPPORTED_LOCALES, DEFAULT_LOCALE, isValidLocale } from '@/lib/constants';
 import { setSsrInitialState } from '@/store/locale-store';
 import { ThemeProvider } from '@/components/shared/ThemeProvider';
 import "./globals.css";
@@ -37,14 +36,9 @@ export const metadata: Metadata = {
         siteName: 'Admin Dashboard',
     },
     robots: {
-        index: false, // Admin dashboard shouldn't be indexed
+        index: false,
         follow: false,
     },
-};
-
-const getDirection = (locale: string): 'ltr' | 'rtl' => {
-    const localeData = SUPPORTED_LOCALES.find(l => l.code === locale);
-    return localeData?.dir || 'ltr';
 };
 
 export default async function RootLayout({
@@ -61,9 +55,8 @@ export default async function RootLayout({
         locale = DEFAULT_LOCALE;
     }
 
-    // Validate and fallback locale
-    const supportedLocaleCodes = SUPPORTED_LOCALES.map(l => l.code);
-    if (!locale || !supportedLocaleCodes.includes(locale)) {
+    // ✅ Use type guard for validation
+    if (!locale || !isValidLocale(locale)) {
         console.warn(
             `[RootLayout] Invalid locale "${locale}", falling back to default "${DEFAULT_LOCALE}"`
         );
@@ -77,7 +70,6 @@ export default async function RootLayout({
         messages = await getMessages({ locale });
     } catch (error) {
         console.error(`[RootLayout] Failed to load messages for locale "${locale}":`, error);
-        // Try to load default locale messages as fallback
         try {
             messages = await getMessages({ locale: DEFAULT_LOCALE });
         } catch (fallbackError) {
@@ -85,8 +77,9 @@ export default async function RootLayout({
         }
     }
 
-    // Inject SSR locale state for Zustand
     setSsrInitialState(locale, dir);
+
+    const supportedLocaleCodes = SUPPORTED_LOCALES.map(l => l.code);
 
     return (
         <html
@@ -111,18 +104,14 @@ export default async function RootLayout({
             <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
             <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 
-            {/* Preconnect to external domains for performance */}
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-            {/* DNS prefetch for potential external resources */}
             <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
         </head>
         <body
             className={cn(
                 "h-full bg-background text-foreground antialiased overflow-hidden",
                 dir === 'rtl' ? 'rtl' : 'ltr',
-                // Add direction-specific classes for Tailwind v4
                 dir === 'rtl' ? 'dir-rtl' : 'dir-ltr'
             )}
             data-locale={locale}

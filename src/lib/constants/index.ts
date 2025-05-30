@@ -15,6 +15,17 @@ export const SUPPORTED_LOCALES = [
 
 export const DEFAULT_LOCALE = 'en' as const;
 
+// ✅ Add missing getDirection function
+export const getDirection = (locale: string): 'ltr' | 'rtl' => {
+    const localeData = SUPPORTED_LOCALES.find(l => l.code === locale);
+    return localeData?.dir || 'ltr';
+};
+
+// ✅ Add helper function for locale validation
+export const isValidLocale = (locale: string): locale is typeof SUPPORTED_LOCALES[number]['code'] => {
+    return SUPPORTED_LOCALES.some(l => l.code === locale);
+};
+
 export const BREAKPOINTS = {
     MOBILE: 768,
     TABLET: 1024,

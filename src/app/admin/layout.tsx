@@ -1,13 +1,12 @@
-// src/app/admin/layout.tsx
 import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import { getLocale, getMessages } from 'next-intl/server';
-import { getDirection, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/lib/constants';
+import { getDirection, SUPPORTED_LOCALES, DEFAULT_LOCALE, isValidLocale } from '@/lib/constants';
 import { setSsrInitialState } from '@/store/locale-store';
 import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider } from '@/components/shared/ThemeProvider';
-// import AppSidebar from '@/components/layouts/admin/sidebar/AppSidebar';
-// import Navbar from '@/components/layouts/admin/navbar/Navbar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Temporary placeholders until we migrate the components
 const AppSidebar = ({ serverDirection }: { serverDirection: string }) => (
@@ -23,8 +22,6 @@ const Navbar = () => (
         <h1 className="text-lg font-semibold">Admin Dashboard</h1>
     </div>
 );
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata = {
     title: 'Admin Dashboard | Your App Name',
@@ -35,11 +32,6 @@ export const metadata = {
         noarchive: true,
         nosnippet: true,
     },
-};
-
-const getDirection = (locale: string): 'ltr' | 'rtl' => {
-    const localeData = SUPPORTED_LOCALES.find(l => l.code === locale);
-    return localeData?.dir || 'ltr';
 };
 
 const SidebarSkeleton = () => (
@@ -100,9 +92,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         locale = DEFAULT_LOCALE;
     }
 
-    // Validate and fallback locale
-    const supportedLocaleCodes = SUPPORTED_LOCALES.map(l => l.code);
-    if (!locale || !supportedLocaleCodes.includes(locale)) {
+    // ✅ Use type guard for validation
+    if (!locale || !isValidLocale(locale)) {
         console.warn(`[AdminLayout] Invalid locale "${locale}", falling back to "${DEFAULT_LOCALE}"`);
         locale = DEFAULT_LOCALE;
     }
@@ -113,7 +104,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         messages = await getMessages({ locale });
     } catch (error) {
         console.error(`[AdminLayout] Failed to load messages for locale "${locale}":`, error);
-        // Try to load default locale messages as fallback
         try {
             messages = await getMessages({ locale: DEFAULT_LOCALE });
         } catch (fallbackError) {
@@ -121,7 +111,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         }
     }
 
-    // Inject SSR locale state for Zustand
     setSsrInitialState(locale, dir);
 
     return (

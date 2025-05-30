@@ -1,4 +1,3 @@
-// src/components/shared/ThemeProvider.tsx
 "use client"
 
 import * as React from "react"
@@ -21,25 +20,25 @@ export function ThemeProvider({
     }, [])
 
     React.useEffect(() => {
+        // ✅ Add return for early exit
+        if (!isMounted) return;
+
         // Sync next-themes with our store
-        if (isMounted) {
-            // Listen for theme changes from next-themes
-            const handleThemeChange = () => {
-                const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-                if (currentTheme !== resolvedTheme) {
-                    setTheme(currentTheme)
-                }
+        const handleThemeChange = () => {
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            if (currentTheme !== resolvedTheme) {
+                setTheme(currentTheme)
             }
-
-            // Create observer for class changes
-            const observer = new MutationObserver(handleThemeChange)
-            observer.observe(document.documentElement, {
-                attributes: true,
-                attributeFilter: ['class']
-            })
-
-            return () => observer.disconnect()
         }
+
+        // Create observer for class changes
+        const observer = new MutationObserver(handleThemeChange)
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        })
+
+        return () => observer.disconnect()
     }, [isMounted, resolvedTheme, setTheme])
 
     if (!isMounted) {

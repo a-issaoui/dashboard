@@ -1,11 +1,8 @@
-// src/i18n/request.ts
 import { getRequestConfig } from 'next-intl/server';
 import { cookies } from 'next/headers';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE, STORAGE_KEYS } from '@/lib/constants';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, STORAGE_KEYS, isValidLocale } from '@/lib/constants';
 
 export default getRequestConfig(async ({ locale: resolvedLocaleByNextIntl_UNUSED }) => {
-    // We are explicitly ignoring resolvedLocaleByNextIntl_UNUSED to ensure
-    // we ONLY rely on the cookie or the hardcoded default.
     console.log(`[i18n/request.ts] Locale that next-intl would have resolved: '${resolvedLocaleByNextIntl_UNUSED}' - This value will be IGNORED in favor of direct cookie check or default.`);
 
     let finalLocale: string;
@@ -16,9 +13,8 @@ export default getRequestConfig(async ({ locale: resolvedLocaleByNextIntl_UNUSED
         const cookieStore = await cookies();
         cookieLocaleValue = cookieStore.get(STORAGE_KEYS.LOCALE)?.value;
 
-        const supportedLocaleCodes = SUPPORTED_LOCALES.map(l => l.code);
-
-        if (cookieLocaleValue && supportedLocaleCodes.includes(cookieLocaleValue)) {
+        // ✅ Use type guard instead of includes
+        if (cookieLocaleValue && isValidLocale(cookieLocaleValue)) {
             console.log(`[i18n/request.ts] Using valid NEXT_LOCALE cookie: '${cookieLocaleValue}'`);
             finalLocale = cookieLocaleValue;
             sourceOfLocaleDetermination = "cookie";
@@ -50,7 +46,6 @@ export default getRequestConfig(async ({ locale: resolvedLocaleByNextIntl_UNUSED
         const err = error as Error;
         console.error(`[i18n/request.ts] CRITICAL: Failed to load messages for locale "${finalLocale}". Error: ${err.message}`);
 
-        // Robust fallback to DEFAULT_LOCALE's messages if the selected locale's messages fail to load
         if (finalLocale !== DEFAULT_LOCALE) {
             try {
                 console.warn(`[i18n/request.ts] Attempting to load '${DEFAULT_LOCALE}.json' as fallback.`);
