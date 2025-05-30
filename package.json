@@ -12,7 +12,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "clean": "rm -rf .next out node_modules/.cache",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "icons:generate": "node scripts/generate-icon-metadata.js",
+    "icons:analyze": "node scripts/analyze-icon-usage.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
