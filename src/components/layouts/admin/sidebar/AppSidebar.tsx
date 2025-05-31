@@ -9,7 +9,7 @@ import {
     SidebarHeader,
     SidebarRail,
 } from '@/components/ui/sidebar';
-import { useIsMobile } from '@/hooks/useMobile';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { user as staticUser } from '@/data/user';
 import { NavigationMenu } from './NavigationMenu';
 import { UserSidebar } from './UserSidebar';

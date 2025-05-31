@@ -17,7 +17,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Icons } from "@/components/icons/Icons";
+import { Icon } from '@/components/icons';
 import { UserMenu } from "../UserMenu";
 import type { User } from "@/types";
 
@@ -52,7 +52,7 @@ interface UserSidebarProps {
     className?: string;
 }
 
-export function UserSidebar({ user, triggerVariant = 'sidebar', className }: UserSidebarProps) {
+export function UserSidebar({ user, className }: UserSidebarProps) {
     const t = useTranslations('UserDropdown');
     const isRTL = useIsRTL();
 
@@ -105,7 +105,7 @@ export function UserSidebar({ user, triggerVariant = 'sidebar', className }: Use
                                 </span>
                             </div>
                             {/* 'ms-auto' is a logical property, correct for LTR/RTL */}
-                            <Icons.CaretSort className="ms-auto size-4" />
+                            <Icon  name="CaretUpDownIcon"  className="ms-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <UserMenu

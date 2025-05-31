@@ -1,6 +1,7 @@
 // src/config/admin/navigations.ts
 import { ROUTES } from './routes';
 import type { NavigationItem } from '@/types';
+import { type IconName } from '@/components/icons';
 
 // Enhanced navigation structure with better group support and i18n keys
 export const sidebarList: NavigationItem[] = [
@@ -9,14 +10,14 @@ export const sidebarList: NavigationItem[] = [
         titleKey: 'navigation.dashboard',
         title: 'Dashboard', // Fallback for non-i18n setups
         url: ROUTES.DASHBOARD.path,
-        icon: 'Dashboard',
+        icon: 'WindowsLogoIcon' as IconName,
         order: 1
     },
     {
         id: 'usersManagement',
         labelKey: 'navigation.usersManagement', // Used for group title key
         label: 'User Management',             // Fallback for group title
-        icon: 'Users', // Group-level icon
+        icon: 'UsersIcon' as IconName,
         order: 2,
         items: [
             {
@@ -24,14 +25,14 @@ export const sidebarList: NavigationItem[] = [
                 titleKey: 'navigation.users',
                 title: 'Users',
                 url: ROUTES.USERS.path,
-                icon: 'UserList',
+                icon: 'UsersIcon' as IconName,
                 order: 1
             },
             {
                 id: 'usersManagement-rolesPermissions',
                 labelKey: 'navigation.rolesAndPermissions', // CHANGED from titleKey for consistency
                 label: 'Roles & Permissions',             // CHANGED from title for consistency
-                icon: 'Shield',
+                icon: 'ShieldIcon' as IconName,
                 order: 2,
                 items: [
                     {
@@ -56,14 +57,14 @@ export const sidebarList: NavigationItem[] = [
         id: 'settings',
         labelKey: 'navigation.settingsGroup', // Used for group title key
         label: 'Settings',                   // Fallback for group title
-        icon: 'Settings',
+        icon: 'GearIcon' as IconName,
         order: 3,
         items: [
             {
                 id: 'settings-general',
                 titleKey: 'navigation.generalSettings',
                 title: 'General Settings',
-                icon: 'Settings',
+                icon: 'GearIcon' as IconName,
                 url: ROUTES.SETTINGS.path,
                 order: 1
             },

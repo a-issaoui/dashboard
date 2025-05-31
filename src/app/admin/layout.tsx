@@ -7,10 +7,11 @@ import { ThemeProvider } from '@/components/shared/ThemeProvider';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DEFAULT_LOCALE, getDirection, isValidLocale } from '@/lib/constants';
+import {cn} from "@/lib/utils";
 
 // Lazy load heavy components
-const AppSidebar = lazy(() => import('@/components/layouts/admin/AppSidebar'));
-const Navbar = lazy(() => import('@/components/layouts/admin/Navbar'));
+const AppSidebar = lazy(() => import('@/components/layouts/admin/sidebar/AppSidebar'));
+const Navbar = lazy(() => import('@/components/layouts/admin/navbar/Navbar'));
 
 // Loading components
 const SidebarSkeleton = () => (

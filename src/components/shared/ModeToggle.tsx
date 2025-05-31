@@ -1,6 +1,6 @@
 'use client';
 
-import { Icons } from '@/components/icons/Icons';
+import { Icon } from '@/components/icons';
 import { useTheme } from '@/store/theme-store';
 import { useLocaleStore } from '@/store/locale-store';
 import * as React from 'react';
@@ -110,11 +110,11 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
             <div className="relative z-10">
                 {isTransitioning ? (
                     <div className="animate-spin">
-                        <Icons.Spinner size={16} className="text-primary" />
+                        <Icon name="SpinnerIcon" size={16} className="text-primary" />
                     </div>
                 ) : isDarkMode ? (
-                    <Icons.ThemeLight
-                        size={20}
+                    <Icon name="SunIcon"
+                          size={20}
                         weight="duotone"
                         className={cn(
                             "text-yellow-500 transition-all duration-300",
@@ -124,8 +124,8 @@ export const ModeToggle: React.FC<ModeToggleProps> = ({ className }) => {
                         )}
                     />
                 ) : (
-                    <Icons.ThemeDark
-                        size={20}
+                    <Icon name="MoonIcon"
+                          size={20}
                         weight="duotone"
                         className={cn(
                             "text-slate-600 dark:text-slate-400 transition-all duration-300",

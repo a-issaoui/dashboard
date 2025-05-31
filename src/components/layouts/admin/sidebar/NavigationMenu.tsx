@@ -6,8 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { sidebarList } from '@/config/admin/navigations';
-import { Icons, getIcon } from '@/components/icons/Icons';
-
+import { Icon,type IconName } from '@/components/icons';
 import {
     Collapsible,
     CollapsibleContent,
@@ -24,7 +23,7 @@ import {
     SidebarMenuSubItem,
     useSidebar,
 } from '@/components/ui/sidebar';
-import type { NavigationItem, IconName } from '@/types';
+import type { NavigationItem } from '@/types';
 
 // Optimized Memoized Icon Component
 interface MenuIconProps {
@@ -33,47 +32,6 @@ interface MenuIconProps {
     className?: string;
 }
 
-const MenuIcon = memo<MenuIconProps>(({ iconName, size = 32, className = '' }) => {
-    const IconComponent = useMemo(() => {
-        if (typeof iconName !== 'string' || !iconName.trim()) {
-            return null;
-        }
-        const icon = getIcon(iconName as IconName);
-        if (icon) {
-            return icon;
-        }
-        return Icons.Menu; // Fallback
-    }, [iconName]);
-
-    if (!IconComponent) {
-        return null;
-    }
-    return <IconComponent size={size} className={className} />;
-});
-MenuIcon.displayName = 'MenuIcon';
-
-// RTL-Ready Chevron Icon - Hidden when sidebar is collapsed
-const ChevronIcon = memo<{ className?: string }>(({ className = '' }) => {
-    const { state } = useSidebar();
-    const isCollapsed = state === 'collapsed';
-
-    if (isCollapsed) return null;
-
-    return (
-        <Icons.CaretRight
-            className={`
-                ms-auto 
-                transition-transform 
-                duration-200 
-                group-data-[state=open]/collapsible:rotate-90 
-                rtl:rotate-180 
-                rtl:group-data-[state=open]/collapsible:rotate-[90deg]
-                ${className}
-            `.trim()}
-        />
-    );
-});
-ChevronIcon.displayName = 'ChevronIcon';
 
 // Helper to calculate active state
 const calculateIsActiveTree = (item: NavigationItem, pathname: string): boolean => {
@@ -123,14 +81,14 @@ const MenuItemRenderer = memo<MenuItemRendererProps>(({
                         }`}
                     >
                         {isCollapsed ? (
-                            <MenuIcon iconName={itemIcon} size={iconSize} />
+                            <Icon name={itemIcon} size={iconSize} />
                         ) : (
                             <>
                                 <div className="flex items-center gap-2">
-                                    <MenuIcon iconName={itemIcon} size={iconSize} />
+                                    <Icon name={itemIcon} size={iconSize} />
                                     <span>{itemTitle}</span>
                                 </div>
-                                <ChevronIcon />
+                                <Icon name="CarretRight" size="32" />
                             </>
                         )}
                     </SidebarMenuButton>
@@ -193,7 +151,7 @@ const MenuItemRenderer = memo<MenuItemRendererProps>(({
                     href={item.url}
                     className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2'}`}
                 >
-                    <MenuIcon iconName={itemIcon} size={iconSize} />
+                    <Icon name={itemIcon} size={iconSize} />
                     {!isCollapsed && <span>{itemTitle}</span>}
                 </Link>
             </ButtonComponent>
@@ -211,10 +169,10 @@ const MenuItemRenderer = memo<MenuItemRendererProps>(({
             }`}
         >
             {isCollapsed ? (
-                <MenuIcon iconName={itemIcon} size={iconSize} />
+                <Icon name={itemIcon} size={iconSize} />
             ) : (
                 <div className="flex items-center gap-2">
-                    <MenuIcon iconName={itemIcon} size={iconSize} />
+                    <Icon name={itemIcon} size={iconSize} />
                     <span>{itemTitle}</span>
                 </div>
             )}
@@ -332,7 +290,7 @@ export const NavigationMenu = memo(() => {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton disabled className="flex items-center gap-2 justify-center">
-                            <MenuIcon iconName="Menu" />
+                            <Icon name="Menu" />
                             <span>{t('navigation.noItems')}</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

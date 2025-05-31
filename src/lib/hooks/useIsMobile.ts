@@ -5,7 +5,7 @@ import { BREAKPOINTS } from '@/lib/constants';
 // Use the MOBILE breakpoint from the constants file
 const MOBILE_BREAKPOINT = BREAKPOINTS.MOBILE;
 
-export function useMobile() {
+export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {

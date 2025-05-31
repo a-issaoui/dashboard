@@ -4,7 +4,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/icons/Icons';
+import { Icon } from '@/components/icons';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useLocaleStore } from '@/store/locale-store';
 
@@ -32,12 +32,7 @@ export function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerP
         }
     }, [open, isRTL]);
 
-    // Get the correct arrow icon based on current state and direction
-    const getArrowIcon = useCallback(() => {
-        // Always use ArrowRight as base, then rotate appropriately
-        // This ensures consistent visual behavior across directions
-        return Icons.ArrowRight;
-    }, []);
+
 
     const handleClick = useCallback(
         (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,7 +53,6 @@ export function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerP
         return `${action} sidebar${context}`;
     }, [open, isMobile]);
 
-    const ArrowIcon = getArrowIcon();
 
     return (
         <Button
@@ -82,7 +76,7 @@ export function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerP
             data-direction={direction}
             {...props}
         >
-            <ArrowIcon
+            <Icon name="ArrowRightIcon"
                 className={cn(
                     'transition-transform duration-200 ease-out',
                     'group-hover:scale-110',
@@ -90,6 +84,7 @@ export function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerP
                 )}
                 size={16}
                 aria-hidden="true"
+                  isRTL
             />
 
             {/* Visual indicator for screen readers */}

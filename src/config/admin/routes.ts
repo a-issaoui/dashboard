@@ -1,5 +1,5 @@
 // src/config/admin/routes.ts
-import type { IconName } from '@/components/icons/Icons';
+import { type IconName } from '@/components/icons'; // Or your actual path
 
 export interface RouteConfig {
     path: string;
@@ -8,7 +8,7 @@ export interface RouteConfig {
     description?: string;
     icon?: IconName;
     requiresAuth?: boolean;
-    roles?: string[];
+    roles?: readonly string[]; // Changed to readonly string[]
 }
 
 export const ROUTES = {
@@ -17,21 +17,21 @@ export const ROUTES = {
         title: 'Home',
         titleKey: 'common.home',
         description: 'Main application landing page.',
-        icon: 'Home' as IconName,
+        icon: 'HouseLineIcon' as IconName,
     },
     LOGIN: {
         path: '/auth/login',
         title: 'Login',
         titleKey: 'auth.signIn',
         description: 'Access your account.',
-        icon: 'SignIn' as IconName,
+        icon: 'SignInIcon' as IconName,
     },
     DASHBOARD: {
         path: '/admin/dashboard',
         title: 'Dashboard Overview',
         titleKey: 'navigation.dashboard',
         description: 'Comprehensive overview of activities and key metrics.',
-        icon: 'Dashboard' as IconName,
+        icon: 'WindowsLogoIcon' as IconName, // Ensure this and other icon names are correct per Phosphor exports
         requiresAuth: true,
     },
     PROFILE: {
@@ -39,7 +39,7 @@ export const ROUTES = {
         title: 'My Profile',
         titleKey: 'navigation.profile',
         description: 'View and manage your personal profile information.',
-        icon: 'Profile' as IconName,
+        icon: 'UserIcon' as IconName,
         requiresAuth: true,
     },
     USERS: {
@@ -47,16 +47,16 @@ export const ROUTES = {
         title: 'User Management',
         titleKey: 'navigation.users',
         description: 'Administer user accounts, roles, and permissions.',
-        icon: 'Users' as IconName,
+        icon: 'UsersIcon' as IconName,
         requiresAuth: true,
-        roles: ['Admin', 'Editor'],
+        roles: ['Admin', 'Editor'], // This will now correctly be inferred as readonly string[]
     },
     ROLES: {
         path: '/admin/roles',
         title: 'Role Management',
         titleKey: 'navigation.roles',
         description: 'Define and manage user roles within the application.',
-        icon: 'Shield' as IconName,
+        icon: 'ShieldIcon' as IconName,
         requiresAuth: true,
         roles: ['Admin'],
     },
@@ -65,7 +65,7 @@ export const ROUTES = {
         title: 'Permission Management',
         titleKey: 'navigation.permissions',
         description: 'Configure permissions associated with different roles.',
-        icon: 'Permission' as IconName,
+        icon: 'ShieldStarIcon' as IconName,
         requiresAuth: true,
         roles: ['Admin'],
     },
@@ -74,7 +74,7 @@ export const ROUTES = {
         title: 'Application Settings',
         titleKey: 'navigation.settings',
         description: 'Adjust and configure global application settings.',
-        icon: 'Settings' as IconName,
+        icon: 'GearIcon' as IconName,
         requiresAuth: true,
         roles: ['Admin'],
     },

@@ -7,7 +7,7 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { UserMenu } from "../UserMenu";
-import { Icons } from "@/components/icons/Icons";
+import { Icon } from '@/components/icons';
 import * as React from "react";
 import { cn } from '@/lib/utils';
 import { useNavbar } from './Navbar';
@@ -136,7 +136,7 @@ export function UserNavbar({ user, className }: UserNavbarProps) {
                     </div>
 
                     {/* Caret with better positioning and animation */}
-                    <Icons.CaretDown
+                    <Icon name="CaretUpDownIcon"
                         size={16}
                         className={cn(
                             "text-muted-foreground transition-all duration-300 ease-in-out",

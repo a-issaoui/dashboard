@@ -2,7 +2,7 @@
 'use client';
 
 import React, { memo, useState, useEffect, useCallback, useMemo } from 'react';
-import { Icons } from '@/components/icons/Icons';
+import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import {
     DropdownMenu,
@@ -85,25 +85,6 @@ interface NotificationIconProps {
     priority: 'high' | 'normal' | 'low';
 }
 
-const NotificationIcon = memo<NotificationIconProps>(({ iconName, className, priority }) => {
-    const IconComponent = Icons[iconName as keyof typeof Icons] || Icons.Bell;
-
-    return (
-        <div className={cn(
-            "relative flex-shrink-0 mt-0.5",
-            priority === 'high' && "text-red-500",
-            priority === 'normal' && "text-blue-500",
-            priority === 'low' && "text-gray-500"
-        )}>
-            <IconComponent size={20} weight="duotone" className={className} />
-            {priority === 'high' && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-            )}
-        </div>
-    );
-});
-
-NotificationIcon.displayName = 'NotificationIcon';
 
 interface NotificationProps {
     className?: string;
@@ -238,12 +219,12 @@ const Notification = memo<NotificationProps>(({ className }) => {
                         "hover:bg-accent/80 hover:shadow-lg hover:scale-105",
                     )}>
                         {unreadCount > 0 ? (
-                            <Icons.Bell size={22} weight="duotone" className={cn(
+                            <Icon name="bellIcon" size={22} weight="duotone" className={cn(
                                 "transition-all duration-300",
                                 highPriorityCount > 0 && "text-red-500"
                             )} />
                         ) : (
-                            <Icons.Bell size={22} weight="duotone" className="transition-all duration-300" />
+                            <Icon name="bellIcon" size={22} weight="duotone" className="transition-all duration-300" />
                         )}
                     </div>
                     {unreadCount > 0 && (
@@ -287,7 +268,7 @@ const Notification = memo<NotificationProps>(({ className }) => {
 
                     {notifications.length === 0 ? (
                         <div className="py-8 px-3 text-center">
-                            <Icons.Bell size={32} className="mx-auto mb-2 text-muted-foreground/50" />
+                            <Icon name="bellIcon" size={32} className="mx-auto mb-2 text-muted-foreground/50" />
                             <p className="text-sm text-muted-foreground">No notifications yet</p>
                             <p className="text-xs text-muted-foreground/70 mt-1">We'll notify you when something happens</p>
                         </div>
@@ -321,9 +302,7 @@ const Notification = memo<NotificationProps>(({ className }) => {
                                                 )}
                                                 {read && <span className="mt-2 h-2 w-2 shrink-0" />}
 
-                                                <NotificationIcon
-                                                    iconName={icon}
-                                                    priority={priority}
+                                                <Icon name="bellIcon"
                                                     className="mr-2 shrink-0"
                                                 />
 
@@ -387,7 +366,7 @@ const Notification = memo<NotificationProps>(({ className }) => {
                                 onClick={handleClearAll}
                                 className="flex items-center justify-center gap-2 p-3 cursor-pointer text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 focus:bg-destructive/5 focus:text-destructive"
                             >
-                                <Icons.Trash size={14} />
+                                <Icon  name="trashIcon" size={14} />
                                 Clear all notifications
                             </DropdownMenuItem>
                         </>

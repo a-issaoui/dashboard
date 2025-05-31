@@ -4,7 +4,7 @@
 import React, { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocaleStore } from '@/store/locale-store';
-import { Icons } from '@/components/icons/Icons';
+import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import {
     DropdownMenu,
@@ -116,7 +116,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = memo(({ className }) =
                 onClick={() => clearError()}
                 title={`Error: ${error}. Click to retry.`}
             >
-                <Icons.Info size={16} className="text-destructive" />
+                <Icon name="InfoIcon"  size={16} className="text-destructive" />
                 <span className="sr-only">Language switcher error: {error}</span>
             </div>
         );
@@ -142,7 +142,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = memo(({ className }) =
                     )}
                 >
                     {isChanging ? (
-                        <Icons.Spinner size={16} className="animate-spin" />
+                        <Icon name="SpinnerIcon" size={16} className="animate-spin" />
                     ) : (
                         <span
                             className={cn(
@@ -197,7 +197,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = memo(({ className }) =
                             </div>
 
                             {isSelected && (
-                                <Icons.Check
+                                <Icon name="CheckIcon"
                                     size={16}
                                     className="text-primary dark:text-primary-foreground shrink-0"
                                     aria-hidden="true"

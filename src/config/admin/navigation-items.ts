@@ -1,5 +1,6 @@
 // src/config/admin/navigation-items.ts
 import type { NavigationItem } from '@/types';
+import { type IconName } from '@/components/icons';
 
 export const navigationItems: NavigationItem[] = [
     {
@@ -7,7 +8,7 @@ export const navigationItems: NavigationItem[] = [
         titleKey: 'navigation.dashboard',
         title: 'Dashboard',
         url: '/admin/dashboard',
-        icon: 'Dashboard',
+        icon: 'WindowsLogoIcon' as IconName,
         order: 1
     },
     {
@@ -15,7 +16,7 @@ export const navigationItems: NavigationItem[] = [
         titleKey: 'navigation.users',
         title: 'Users',
         url: '/admin/users',
-        icon: 'Users',
+        icon: 'UsersIcon' as IconName,
         order: 2
     },
     {
@@ -23,7 +24,7 @@ export const navigationItems: NavigationItem[] = [
         titleKey: 'navigation.roles',
         title: 'Roles',
         url: '/admin/roles',
-        icon: 'Shield',
+        icon: 'ShieldIcon' as IconName,
         order: 3
     },
     {
@@ -31,7 +32,7 @@ export const navigationItems: NavigationItem[] = [
         titleKey: 'navigation.permissions',
         title: 'Permissions',
         url: '/admin/permissions',
-        icon: 'Permission',
+        icon: 'ShieldStarIcon' as IconName,
         order: 4
     },
     {
@@ -39,7 +40,7 @@ export const navigationItems: NavigationItem[] = [
         titleKey: 'navigation.settings',
         title: 'Settings',
         url: '/admin/settings',
-        icon: 'Settings',
+        icon: 'GearIcon' as IconName,
         order: 5
     },
 ];

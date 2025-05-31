@@ -1,3 +1,5 @@
+import { type IconName } from '@/components/icons';
+
 export interface User {
     id: string;
     name: string;
@@ -22,7 +24,7 @@ export interface NavigationItem {
     labelKey?: string;
     label?: string;
     url?: string;
-    icon?: string;
+    icon?: IconName; // Changed from string to IconName
     order?: number;
     items?: NavigationItem[];
     badge?: string | number;

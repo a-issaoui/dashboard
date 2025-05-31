@@ -15,8 +15,8 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Icons } from "@/components/icons/Icons";
-import { useIsMobile } from "@/hooks/useMobile";
+import { Icon } from "@/components/icons";
+
 import type { User } from "@/types";
 
 interface UserInfoProps {
@@ -55,15 +55,15 @@ const MenuItems = React.memo(() => {
         <>
             <DropdownMenuGroup>
                 <DropdownMenuItem className={menuItemClasses}>
-                    <Icons.Profile className="h-4 w-4 shrink-0" />
+                    <Icon name="UserIcon" className="h-4 w-4 shrink-0" />
                     <span>{t('account')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className={menuItemClasses}>
-                    <Icons.Billing className="h-4 w-4 shrink-0" />
+                    <Icon name="UserIcon"  className="h-4 w-4 shrink-0" />
                     <span>{t('billing')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className={menuItemClasses}>
-                    <Icons.Notification className="h-4 w-4 shrink-0" />
+                    <Icon name="UserIcon"  className="h-4 w-4 shrink-0" />
                     <span>{t('notifications')}</span>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -72,7 +72,7 @@ const MenuItems = React.memo(() => {
 
             {/* For the "Log out" item, text-destructive and focus:text-destructive are specific styling */}
             <DropdownMenuItem className={`${menuItemClasses} text-destructive focus:text-destructive`}>
-                <Icons.SignOut className="h-4 w-4 shrink-0" />
+                <Icon name="UserIcon"  className="h-4 w-4 shrink-0" />
                 <span>{t('logout')}</span>
             </DropdownMenuItem>
         </>
@@ -103,7 +103,7 @@ export function UserMenu({
                              alignOffset,
                              collisionPadding,
                          }: UserMenuProps) {
-    const isMobile = useIsMobile();
+    const isMobile = useMobile();
     const t = useTranslations('UserDropdown');
 
     const initials = React.useMemo(() => {
